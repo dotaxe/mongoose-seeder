@@ -10,7 +10,6 @@
 
 // module dependencies
 var vm = require('vm'),
-    mongoose = require('mongoose'),
     async = require('async'),
     _ = require('lodash'),
     Q = require('q'),
@@ -34,7 +33,7 @@ module.exports = (function() {
          * @param  {Object}   data The data that should be seeded.
          * @param  {Function} done The method that should be called when the seeding is done
          */
-        _seed: function(data, done) {
+        _seed: function(mongoose, data, done) {
             try {
                 // Retrieve all the dependencies
                 _.forEach(data._dependencies || {}, function(value, key) {
@@ -222,7 +221,7 @@ module.exports = (function() {
          * @param  {Object}   options  The options object to provide extras.
          * @param  {Function} callback The method that should be called when the seeding is done.
          */
-        seed: function(data, options, callback) {
+        seed: function(mongoose, data, options, callback) {
             if(_.isFunction(options)) {
                 // Set the correct callback function
                 callback = options;
@@ -259,12 +258,12 @@ module.exports = (function() {
                     }
 
                     // Start seeding when the database is dropped
-                    _this._seed(_.cloneDeep(data), done);
+                    _this._seed(mongoose, _.cloneDeep(data), done);
                 });
             }
             else {
                 // Do not drop the entire database, start seeding
-                _this._seed(_.cloneDeep(data), done);
+                _this._seed(mongoose, _.cloneDeep(data), done);
             }
 
             /**
